@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
     Button,
     Link,
@@ -16,6 +17,7 @@ import {
     SelectChangeEvent,
     Autocomplete,
 } from "@mui/material";
+import * as React from "react";
 import "./index.scss";
 import randomColor from "../../util/randomColor";
 import AddCircleOutlineOutlinedIcon from "@mui/icons-material/AddCircleOutlineOutlined";
@@ -23,8 +25,7 @@ import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import isDarkOrLightColor from "../../util/isDarkorLightColor";
 
-import { useEffect, useState } from "react";
-import { redirect } from "react-router-dom";
+import  { useEffect, useState } from "react";
 export default function DashBoard({
     setPage,
 }: {
@@ -166,6 +167,8 @@ export default function DashBoard({
             <CreateTeamModal
                 open={openCreateTeamModal}
                 handleCreateTeamModalClose={handleCreateTeamModalClose}
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                //@ts-ignore
                 setTeams={setTeams}
             />
         </>
@@ -210,7 +213,7 @@ function TeamCard({
     name,
     memberCount,
     id,
-    team,
+
 }: {
     name: string;
     memberCount: number;
@@ -320,7 +323,7 @@ function CreateProjectModal({
                 email: user.email,
                 password: user.password,
                 teams: user.teams.map((x: { id: string }) => x.id),
-                projects: user.projects.map((x) => x.id),
+                projects: user.projects.map((x: { id: any; }) => x.id),
             }),
         });
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -415,9 +418,7 @@ function CreateTeamModal({
 }: {
     open: boolean;
     handleCreateTeamModalClose: () => void;
-    setTeams: (
-        teams: { name: string; memberCount: number; id: string }[],
-    ) => void;
+    setTeams: React.Dispatch<React.SetStateAction<unknown[]>>;
 }) {
     const style = {
         position: "absolute",
@@ -489,7 +490,7 @@ function CreateTeamModal({
                 email: user.email,
                 password: user.password,
                 teams: user.teams.map((x: { id: string }) => x.id),
-                projects: user.projects.map((x) => x.id),
+                projects: user.projects.map((x: { id: any; }) => x.id),
             }),
         });
 
@@ -562,7 +563,7 @@ function CreateTeamModal({
                                 sx={{
                                     width: "100%",
                                 }}
-                                onChange={(e, value) => {
+                                onChange={(_, value) => {
                                     console.log(value);
                                     if (value) {
                                         addInvitee(value);

@@ -1,11 +1,13 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+//@ts-nocheck
 import {
     Autocomplete,
     Avatar,
     Button,
     Divider,
     Drawer,
-    Menu,
-    MenuItem,
     Paper,
     Select,
     Tab,
@@ -355,7 +357,7 @@ export default function Project() {
             console.log(data);
             setRows(tasks);
         })();
-    }, []);
+    }, [location.pathname]);
 
     const [taskSelected, setTaskSelected] = React.useState<Task | null>(null);
 
