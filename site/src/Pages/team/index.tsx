@@ -21,25 +21,33 @@ export default function Team() {
     });
     const [name, setName] = useState("");
     const [members, setMembers] = useState([]);
-    const location = useLocation(); 
+    const location = useLocation();
     useEffect(() => {
+        const teamId = location.pathname
+            .split("/")
+            .pop()
+            ?.split("_")
+            .join(".") as string;
+        console.log("teamId", teamId);
+        (async () => {
+            const teamData = await fetch(
+                `https://pmt-backend.usersatoshi.repl.co/teams/${teamId}`,
+                {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${localStorage.getItem(
+                            "token",
+                        )}`,
+                    },
+                },
+            ).then((res) => res.json());
+            console.log("teamData", teamData);
 
-        const teamId = location.pathname.split('/').pop()?.split("_").join(".") as string;
-        console.log('teamId', teamId);
-        (async() => {
-        const teamData = await fetch(`http://localhost:3000/teams/${teamId}`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${localStorage.getItem('token')}`
-            },
-        }).then(res => res.json());
-        console.log('teamData', teamData);
-
-        setMembers(teamData.data.teams.members)
-        setName(teamData.data.teams.name);
-    })();
-    },[location.pathname]);
+            setMembers(teamData.data.teams.members);
+            setName(teamData.data.teams.name);
+        })();
+    }, [location.pathname]);
     return (
         <ThemeProvider theme={darkTheme}>
             <div className="team">
@@ -65,7 +73,7 @@ export default function Team() {
                             flexWrap: "wrap",
                             alignItems: "center",
                             justifyContent: "flex-start",
-                            gap: "16px"
+                            gap: "16px",
                         }}
                     >
                         {members.map((member: any) => (
@@ -75,7 +83,6 @@ export default function Team() {
                                 role="Member"
                             />
                         ))}
-                        
                     </List>
                 </div>
             </div>
@@ -93,13 +100,16 @@ function Member({
     role: string;
 }) {
     return (
-        <ListItem alignItems="center" sx={{
-            width: "max-content",
-            minWidth: 150,
-            backgroundColor: "background.default",
-            borderRadius: "8px",
-            padding: "32px",
-        }}>
+        <ListItem
+            alignItems="center"
+            sx={{
+                width: "max-content",
+                minWidth: 150,
+                backgroundColor: "background.default",
+                borderRadius: "8px",
+                padding: "32px",
+            }}
+        >
             <ListItemAvatar>
                 <Avatar alt={name} />
             </ListItemAvatar>

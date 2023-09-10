@@ -123,7 +123,7 @@ export default function DashBoard({
                             <ProjectCard
                                 name={project.name}
                                 description={project.description}
-                                id={project.id.replaceAll(".","_")}
+                                id={project.id.replaceAll(".", "_")}
                             />
                         ))}
                     </div>
@@ -148,7 +148,7 @@ export default function DashBoard({
                                 <TeamCard
                                     name={team.name}
                                     memberCount={team.members.length}
-                                    id={team.id.replaceAll(".","_")}
+                                    id={team.id.replaceAll(".", "_")}
                                     team={team}
                                 />
                             );
@@ -293,20 +293,23 @@ function CreateProjectModal({
     const createProject = async () => {
         console.log({ pn, pd, team });
 
-        const {data} = await fetch("http://localhost:3000/projects/create", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${localStorage.getItem("token")}`,
+        const { data } = await fetch(
+            "https://pmt-backend.usersatoshi.repl.co/projects/create",
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                },
+                body: JSON.stringify({ name: pn, description: pd, team }),
             },
-            body: JSON.stringify({ name: pn, description: pd, team }),
-        }).then((res) => res.json());
+        ).then((res) => res.json());
 
         const user = JSON.parse(localStorage.getItem("user") || "{}");
         user.projects.push(data.project);
         localStorage.setItem("user", JSON.stringify(user));
 
-        await fetch("http://localhost:3000/users/update", {
+        await fetch("https://pmt-backend.usersatoshi.repl.co/users/update", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -316,8 +319,8 @@ function CreateProjectModal({
                 username: user.username,
                 email: user.email,
                 password: user.password,
-                teams: user.teams.map((x: { id: string; }) => x.id),
-                projects: user.projects.map(x => x.id),
+                teams: user.teams.map((x: { id: string }) => x.id),
+                projects: user.projects.map((x) => x.id),
             }),
         });
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -456,20 +459,26 @@ function CreateTeamModal({
     const createTeam = async () => {
         console.log({ teamName, invitedMembers });
 
-        const { data } = await fetch("http://localhost:3000/teams/create", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${localStorage.getItem("token")}`,
+        const { data } = await fetch(
+            "https://pmt-backend.usersatoshi.repl.co/teams/create",
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                },
+                body: JSON.stringify({
+                    name: teamName,
+                    members: invitedMembers,
+                }),
             },
-            body: JSON.stringify({ name: teamName, members: invitedMembers }),
-        }).then((res) => res.json());
+        ).then((res) => res.json());
 
         const user = JSON.parse(localStorage.getItem("user") || "{}");
         user.teams.push(data.team);
         localStorage.setItem("user", JSON.stringify(user));
 
-        await fetch("http://localhost:3000/users/update", {
+        await fetch("https://pmt-backend.usersatoshi.repl.co/users/update", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -479,8 +488,8 @@ function CreateTeamModal({
                 username: user.username,
                 email: user.email,
                 password: user.password,
-                teams: user.teams.map((x: { id: string; }) => x.id),
-                projects: user.projects.map(x => x.id),
+                teams: user.teams.map((x: { id: string }) => x.id),
+                projects: user.projects.map((x) => x.id),
             }),
         });
 
@@ -499,13 +508,18 @@ function CreateTeamModal({
 
     useEffect(() => {
         (async () => {
-            const { data } = await fetch("http://localhost:3000/users", {
-                method: "GET",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+            const { data } = await fetch(
+                "https://pmt-backend.usersatoshi.repl.co/users",
+                {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${localStorage.getItem(
+                            "token",
+                        )}`,
+                    },
                 },
-            }).then((res) => res.json());
+            ).then((res) => res.json());
             setAllMembers(data.users);
         })();
     }, []);

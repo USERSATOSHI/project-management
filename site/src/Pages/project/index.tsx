@@ -31,7 +31,6 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 
-
 interface TabPanelProps {
     children?: React.ReactNode;
     index: number;
@@ -333,24 +332,30 @@ export default function Project() {
 
     const location = useLocation();
     React.useEffect(() => {
-        const id = location.pathname.split("/").pop()?.split("_").join(".") as string;
-        (async() => {
-        const { data } = await fetch("http://localhost:3000/projects/"+id,{
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": "Bearer "+localStorage.getItem("token")+"",
-            },
-        }).then((res) => res.json());
-        const p = data.project;
-        setProject(p);
-        const tasks = p.tasks;
-        console.log(data);
-        setRows(tasks)
-
+        const id = location.pathname
+            .split("/")
+            .pop()
+            ?.split("_")
+            .join(".") as string;
+        (async () => {
+            const { data } = await fetch(
+                "https://pmt-backend.usersatoshi.repl.co/projects/" + id,
+                {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization:
+                            "Bearer " + localStorage.getItem("token") + "",
+                    },
+                },
+            ).then((res) => res.json());
+            const p = data.project;
+            setProject(p);
+            const tasks = p.tasks;
+            console.log(data);
+            setRows(tasks);
         })();
-    },[]);
-
+    }, []);
 
     const [taskSelected, setTaskSelected] = React.useState<Task | null>(null);
 
@@ -372,7 +377,11 @@ export default function Project() {
                     setOpenDrawer={setOpenDrawer}
                     setTaskSelected={setTaskSelected}
                 />
-                <Button variant="contained" className="button" onClick={() => setOpenTaskModal(true)}>
+                <Button
+                    variant="contained"
+                    className="button"
+                    onClick={() => setOpenTaskModal(true)}
+                >
                     Add Task
                 </Button>
             </div>
@@ -388,7 +397,6 @@ export default function Project() {
                 team={project?.team}
                 setRows={setRows}
             />
-
         </ThemeProvider>
     );
 }
@@ -412,9 +420,9 @@ function CreateTaskModal({
                 due: number;
                 id: string;
             }[]
-        >>
+        >
+    >;
 }) {
-
     const [name, setName] = React.useState("");
     const [description, setDescription] = React.useState("");
     const [due, setDue] = React.useState("");
@@ -443,7 +451,7 @@ function CreateTaskModal({
                 id: prev.length + 1 + "",
             },
         ]);
-    }
+    };
     return (
         <Drawer
             anchor="right"
@@ -491,13 +499,19 @@ function CreateTaskModal({
                     />
 
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
-                        <DatePicker value={due} onChange={(e) => setDue(new Date(e?.toString()).getTime())} renderInput={(params) => <TextField {...params} />} />
+                        <DatePicker
+                            value={due}
+                            onChange={(e) =>
+                                setDue(new Date(e?.toString()).getTime())
+                            }
+                            renderInput={(params) => <TextField {...params} />}
+                        />
                     </LocalizationProvider>
 
                     <Autocomplete
                         disablePortal
                         id="combo-box-demo"
-                        options={team?.members.map(x => x.username)}
+                        options={team?.members.map((x) => x.username)}
                         sx={{ width: 300 }}
                         renderInput={(params) => (
                             <TextField
@@ -506,9 +520,8 @@ function CreateTaskModal({
                                 variant="outlined"
                             />
                         )}
-
                         value={assignedTo}
-                        onChange={(e,value) => setAssignedTo(value)}
+                        onChange={(e, value) => setAssignedTo(value)}
                     />
 
                     <Select
@@ -520,12 +533,16 @@ function CreateTaskModal({
                             id: "outlined-age-native-simple",
                         }}
                     >
-                    <option value={"TODO"}>TODO</option>
-                    <option value={"PROGRESS"}>PROGRESS</option>
-                    <option value={"COMPLETED"}>COMPLETED</option>
+                        <option value={"TODO"}>TODO</option>
+                        <option value={"PROGRESS"}>PROGRESS</option>
+                        <option value={"COMPLETED"}>COMPLETED</option>
                     </Select>
 
-                    <Button variant="contained" className="button" onClick={handleclick}>
+                    <Button
+                        variant="contained"
+                        className="button"
+                        onClick={handleclick}
+                    >
                         Create Task
                     </Button>
                 </Paper>
@@ -611,7 +628,8 @@ function DrawerComponent({
                         {taskSelected?.description}
                     </div>
                     <div className="due">
-                        <b>Due:</b> {new Date(taskSelected?.due).toLocaleString()}
+                        <b>Due:</b>{" "}
+                        {new Date(taskSelected?.due).toLocaleString()}
                     </div>
                     <div className="assignedTo">
                         <b>Assigned To:</b>:{" "}
